@@ -1,0 +1,14 @@
+# Bicep build artifacts
+*.json
+!parameters.json
+
+# Azure CLI / Bicep local cache
+.bicep/
+
+# VS Code folders
+.vscode/
+.history/
+
+# OS files
+.DS_Store
+Thumbs.db
