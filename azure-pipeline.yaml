@@ -1,0 +1,33 @@
+trigger:
+- main
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+variables:
+  # Reference a variable group in DevOps for your secrets
+  # group: 'vm-secrets' 
+  resourceGroupName: 'rg-windows-provisioning'
+  location: 'uksouth'
+  azureServiceConnection: 'MyAzureServiceConnection'
+
+stages:
+- stage: Deploy
+  jobs:
+  - job: ProvisionVM
+    steps:
+    - task: AzureResourceManagerTemplateDeployment@3
+      inputs:
+        deploymentScope: 'Resource Group'
+        azureResourceManagerConnection: '$(azureServiceConnection)'
+        subscriptionId: 'your-subscription-id-here'
+        action: 'Create Or Update Resource Group'
+        resourceGroupName: '$(resourceGroupName)'
+        location: '$(location)'
+        templateLocation: 'Linked artifact'
+        csmFile: './deploy-vm.bicep' # Path to your bicep file
+        overrideParameters: >
+          -vmName "ws2022-prod"
+          -adminUsername "cloudadmin"
+          -adminPassword "$(vmAdminPassword)" 
+        deploymentMode: 'Incremental'
